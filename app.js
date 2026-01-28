@@ -4,11 +4,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const entriesContainer = document.getElementById('entries-container');
     const searchInput = document.getElementById('search-input');
 
+    // Player Stats Elements
+    const playerLevelEl = document.getElementById('player-level');
+    const xpBarFillEl = document.getElementById('xp-bar-fill');
+    const currentXpEl = document.getElementById('current-xp');
+    const nextXpEl = document.getElementById('next-xp');
+
     // State
     let entries = JSON.parse(localStorage.getItem('gameDiaryEntries')) || [];
+    let player = JSON.parse(localStorage.getItem('gameDiaryPlayer')) || {
+        level: 1,
+        xp: 0,
+        nextLevelXp: 100
+    };
 
     // Initialize
     renderEntries();
+    updatePlayerUI();
 
     // Event Listeners
     gameForm.addEventListener('submit', handleFormSubmit);
@@ -42,11 +54,58 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.unshift(newEntry); // Add to top
         saveEntries();
         renderEntries();
+
+        // Calculate and Award XP
+        // Base XP: 50
+        // Length Bonus: 1 XP per character in review
+        const earnedXp = 50 + (review ? review.length : 0);
+        gainXP(earnedXp);
+
         gameForm.reset();
     }
 
     function saveEntries() {
         localStorage.setItem('gameDiaryEntries', JSON.stringify(entries));
+    }
+
+    function savePlayerStats() {
+        localStorage.setItem('gameDiaryPlayer', JSON.stringify(player));
+    }
+
+    function updatePlayerUI() {
+        playerLevelEl.textContent = player.level;
+        currentXpEl.textContent = player.xp;
+        nextXpEl.textContent = player.nextLevelXp;
+
+        const percentage = Math.min((player.xp / player.nextLevelXp) * 100, 100);
+        xpBarFillEl.style.width = `${percentage}%`;
+    }
+
+    function gainXP(amount) {
+        player.xp += amount;
+        let leveledUp = false;
+
+        // Level Up Logic
+        while (player.xp >= player.nextLevelXp) {
+            player.xp -= player.nextLevelXp;
+            player.level++;
+            // Increase XP required for next level (e.g., +50 each level)
+            player.nextLevelXp += 50;
+            leveledUp = true;
+        }
+
+        savePlayerStats();
+        updatePlayerUI();
+
+        if (leveledUp) {
+            alert(`🎉 Level Up! You are now Level ${player.level}!`);
+            const badge = document.querySelector('.level-badge');
+            badge.classList.add('level-up-anim');
+            setTimeout(() => badge.classList.remove('level-up-anim'), 1500);
+        } else {
+            // Optional: Small notification for XP gain
+            // console.log(`Gained ${amount} XP`);
+        }
     }
 
     function renderEntries(filterText = '') {
