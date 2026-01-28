@@ -8,6 +8,8 @@
     --danger: #cf6679;
     --input-bg: #2c2c2c;
     --border: #333;
+    --xp-fill: #03dac6;
+    --xp-bg: #333;
 }
 
 body {
@@ -47,6 +49,53 @@ h2 {
     border-left: 4px solid var(--accent);
     padding-left: 10px;
     margin-top: 30px;
+}
+
+/* Player Profile Styling */
+.player-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--accent);
+}
+
+.level-badge {
+    font-family: 'Press Start 2P', cursive;
+    color: gold;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.xp-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.xp-bar-bg {
+    background-color: var(--xp-bg);
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 5px;
+    border: 1px solid #555;
+}
+
+.xp-bar-fill {
+    background-color: var(--xp-fill);
+    height: 100%;
+    width: 0%; /* Dynamic */
+    transition: width 0.5s ease-out;
+    box-shadow: 0 0 10px var(--xp-fill);
+}
+
+.xp-text {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: right;
 }
 
 /* Form Styling */
@@ -177,6 +226,17 @@ button {
 .btn-delete {
     background-color: var(--danger);
     color: #fff;
+}
+
+/* Level Up Animation */
+@keyframes levelUpPulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 215, 0, 0); }
+    50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.7); }
+    100% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 215, 0, 0); }
+}
+
+.level-up-anim {
+    animation: levelUpPulse 0.5s ease-in-out 3;
 }
 
 /* Responsive */
